@@ -1,0 +1,15 @@
+{
+  "name": "Punti Cardinali for Work",
+  "short_name": "PCFW",
+  "description": "Orientamento, formazione e lavoro per il territorio.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a3a5a",
+  "icons": [
+    { "src": "/web-app-manifest-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/web-app-manifest-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/web-app-manifest-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
