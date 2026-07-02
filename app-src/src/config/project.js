@@ -31,7 +31,8 @@ export const project = {
     logoHeader: '/brand/logo.png',
     hero: '', // hero su rosso pieno (foto hero dedicata: da produrre)
     logosFooter: '', // striscia loghi footer mancante (da produrre)
-    favicon: '/favicon.svg',
+    favicon: '/favicon-96x96.png',
+    icon: '/web-app-manifest-192x192.png',
   },
 
   form: {
