@@ -129,7 +129,7 @@ export function OrientationLab() {
           <CardGrid items={area.laboratori} context={area.titolo} />
         </Section>
       ))}
-      <Section><div className="cta-stack"><BookingCTA label="Iscriviti a un laboratorio" tipo="laboratorio" /></div></Section>
+      <Section><div className="cta-stack"><BookingCTA label="Iscriviti a un laboratorio" tipo="laboratorio" labGroups={l.aree} /></div></Section>
     </>
   )
 }

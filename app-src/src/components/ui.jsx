@@ -132,8 +132,9 @@ export function Modal({ open, onClose, children, title }) {
   )
 }
 
-/* Pulsante CTA che apre la modale col form di prenotazione */
-export function BookingCTA({ label, tipo = 'consulenza', ghost, titoloForm }) {
+/* Pulsante CTA che apre la modale col form di prenotazione.
+   `labGroups` abilita la selezione multipla dei laboratori nel form. */
+export function BookingCTA({ label, tipo = 'consulenza', ghost, titoloForm, labGroups }) {
   const [open, setOpen] = useState(false)
   return (
     <>
@@ -141,7 +142,7 @@ export function BookingCTA({ label, tipo = 'consulenza', ghost, titoloForm }) {
         {label}
       </button>
       <Modal open={open} onClose={() => setOpen(false)} title={label}>
-        <BookingForm tipo={tipo} titolo={titoloForm || label} onClose={() => setOpen(false)} />
+        <BookingForm tipo={tipo} titolo={titoloForm || label} labGroups={labGroups} onClose={() => setOpen(false)} />
       </Modal>
     </>
   )

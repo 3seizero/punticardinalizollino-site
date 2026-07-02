@@ -2,14 +2,12 @@ import { useState } from 'react'
 import { project } from '../config/project.js'
 
 /**
- * Form CTA con invio via email.
- * Supporta due provider (vedi project.form.provider):
- *  - 'web3forms' : POST a https://api.web3forms.com/submit (nessun backend)
- *  - 'php'       : POST all'endpoint PHP del sito (/contact.php) configurato su Plesk
- *
- * `tipo` distingue la richiesta (consulenza | laboratorio | evento | info | donna).
+ * Form CTA con invio via email (provider 'php' → /contact.php, o 'web3forms').
+ * `tipo` distingue la richiesta. `labGroups` (array di aree {titolo, laboratori:[{nome}]})
+ * abilita la selezione multipla dei laboratori (checkbox) — usato dal form "laboratorio".
+ * Il backend invia la mail ad Antform E un autoresponder di riepilogo al mittente.
  */
-export default function BookingForm({ tipo = 'consulenza', titolo, onClose }) {
+export default function BookingForm({ tipo = 'consulenza', titolo, labGroups, onClose }) {
   const [state, setState] = useState('idle') // idle | sending | ok | error
   const [err, setErr] = useState('')
 
@@ -19,7 +17,6 @@ export default function BookingForm({ tipo = 'consulenza', titolo, onClose }) {
     setErr('')
     const fd = new FormData(e.target)
     const cfg = project.form
-
     try {
       let res
       if (cfg.provider === 'web3forms') {
@@ -47,7 +44,8 @@ export default function BookingForm({ tipo = 'consulenza', titolo, onClose }) {
     return (
       <div className="form-success" role="status">
         <h3>Richiesta inviata ✅</h3>
-        <p>Grazie! Ti ricontatteremo al più presto dall'Orientation Desk.</p>
+        <p>Grazie! Ti ricontatteremo al più presto dall'Orientation Desk.<br />
+           Riceverai a breve una <strong>email di riepilogo</strong> all'indirizzo indicato.</p>
         {onClose && <button className="btn btn--primary" onClick={onClose}>Chiudi</button>}
       </div>
     )
@@ -57,6 +55,7 @@ export default function BookingForm({ tipo = 'consulenza', titolo, onClose }) {
     <form className="booking-form" onSubmit={handleSubmit}>
       {titolo && <h3>{titolo}</h3>}
       <input type="hidden" name="tipo_richiesta" value={tipo} />
+      <input type="hidden" name="progetto" value={project.nomeProgetto} />
       {/* honeypot anti-spam */}
       <input type="checkbox" name="botcheck" className="visually-hidden" tabIndex="-1" autoComplete="off" />
 
@@ -69,6 +68,24 @@ export default function BookingForm({ tipo = 'consulenza', titolo, onClose }) {
       <label>Telefono
         <input name="telefono" type="tel" autoComplete="tel" />
       </label>
+
+      {labGroups && labGroups.length > 0 && (
+        <fieldset className="lab-picker">
+          <legend>Laboratori di interesse <span>(seleziona uno o più)</span></legend>
+          {labGroups.map((area, i) => (
+            <div className="lab-picker__group" key={i}>
+              <p className="lab-picker__area">{area.titolo}</p>
+              {area.laboratori.map((lab, j) => (
+                <label className="lab-picker__item" key={j}>
+                  <input type="checkbox" name="laboratori[]" value={lab.nome} />
+                  <span>{lab.nome}</span>
+                </label>
+              ))}
+            </div>
+          ))}
+        </fieldset>
+      )}
+
       <label>Messaggio
         <textarea name="messaggio" rows="4" placeholder="Descrivi brevemente la tua richiesta…" />
       </label>
