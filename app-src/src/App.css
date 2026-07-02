@@ -194,3 +194,24 @@
   background: none; border: none; font-size: 2rem; line-height: 1; cursor: pointer; color: var(--c-text-soft);
 }
 .modal__close:hover { color: var(--c-primary); }
+
+/* ---- Avviso installazione PWA (Aggiungi a Home) ---- */
+.install-prompt {
+  position: fixed; left: 50%; bottom: 1rem; transform: translateX(-50%);
+  width: min(560px, calc(100% - 1.5rem)); z-index: 90;
+  display: flex; align-items: center; gap: 0.9rem;
+  background: var(--c-bg); border: 1px solid var(--c-border); border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.22); padding: 0.9rem 1rem;
+  animation: install-up .3s ease;
+}
+@keyframes install-up { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
+.install-prompt__icon { height: 46px; width: auto; max-width: 90px; border-radius: 10px; flex: 0 0 auto; }
+.install-prompt__body { flex: 1 1 auto; min-width: 0; }
+.install-prompt__body strong { display: block; color: var(--c-primary); font-size: 0.98rem; }
+.install-prompt__body p { margin: 0.2rem 0 0; font-size: 0.82rem; color: var(--c-text-soft); line-height: 1.45; }
+.install-prompt__cta { flex: 0 0 auto; padding: 0.6rem 1.2rem; }
+.install-prompt__close { position: absolute; top: 0.25rem; right: 0.4rem; width: 32px; height: 32px; border: none; background: none; font-size: 1.4rem; line-height: 1; color: var(--c-text-soft); cursor: pointer; }
+@media (max-width: 520px) {
+  .install-prompt { flex-wrap: wrap; padding-right: 1.6rem; }
+  .install-prompt__cta { width: 100%; }
+}

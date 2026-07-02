@@ -3,6 +3,7 @@ import { Routes, Route, NavLink, Link, useLocation } from 'react-router-dom'
 import { project } from './config/project.js'
 import { content } from './config/content.js'
 import { Home, Progetto, OrientationDesk, OrientationLab, JobDay, DonnaPartecipa, MareASinistra, Opportunita, Contatti } from './pages.jsx'
+import InstallPrompt from './components/InstallPrompt.jsx'
 import './App.css'
 
 /* Applica la palette del progetto come variabili CSS su :root */
@@ -161,6 +162,7 @@ export default function App() {
         </Routes>
       </main>
       <Footer />
+      <InstallPrompt />
     </>
   )
 }
