@@ -118,8 +118,22 @@ export function Modal({ open, onClose, children, title }) {
     if (!open) return
     const onKey = (e) => e.key === 'Escape' && onClose()
     document.addEventListener('keydown', onKey)
-    document.body.style.overflow = 'hidden'
-    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = '' }
+    // Blocco scroll robusto: "body fixed" (impedisce ogni movimento dello sfondo,
+    // funziona anche con overflow-x:clip su html per l'header sticky)
+    const scrollY = window.scrollY
+    const b = document.body
+    b.style.position = 'fixed'
+    b.style.top = `-${scrollY}px`
+    b.style.insetInline = '0'
+    b.style.width = '100%'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      b.style.position = ''
+      b.style.top = ''
+      b.style.insetInline = ''
+      b.style.width = ''
+      window.scrollTo(0, scrollY)
+    }
   }, [open, onClose])
   if (!open) return null
   return (
