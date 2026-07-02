@@ -32,7 +32,7 @@ export const project = {
     hero: '', // hero su rosso pieno (foto hero dedicata: da produrre)
     logosFooter: '', // striscia loghi footer mancante (da produrre)
     favicon: '/favicon-96x96.png',
-    icon: '/web-app-manifest-192x192.png',
+    icon: '/icons/icon-192.png',
   },
 
   form: {
