@@ -68,8 +68,8 @@
 .lab-picker legend { font-weight: 700; font-size: 0.9rem; padding: 0 0.4rem; color: var(--c-text); }
 .lab-picker legend span { font-weight: 400; color: var(--c-text-soft); }
 .lab-picker__area { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--c-secondary); font-weight: 700; margin: 0.7rem 0 0.25rem; }
-.lab-picker__item { display: flex; align-items: flex-start; gap: 0.5rem; font-weight: 400; font-size: 0.9rem; padding: 0.18rem 0; }
-.lab-picker__item input { margin-top: 0.2rem; flex: 0 0 auto; }
+.booking-form .lab-picker__item { display: flex; align-items: flex-start; gap: 0.5rem; font-weight: 400; font-size: 0.9rem; padding: 0.18rem 0; }
+.booking-form .lab-picker__item input { margin-top: 0.2rem; flex: 0 0 auto; width: auto; }
 .form-error { color: #c0392b; font-weight: 600; }
 .form-success { text-align: center; padding: 1.5rem; }
 
