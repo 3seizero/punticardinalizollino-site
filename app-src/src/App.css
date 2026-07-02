@@ -63,11 +63,23 @@
 }
 .booking-form .consent { grid-template-columns: auto 1fr; align-items: start; gap: 0.5rem; font-weight: 400; font-size: 0.82rem; }
 
-/* Selezione multipla laboratori */
-.lab-picker { border: 1px solid var(--c-border); border-radius: 10px; padding: 0.6rem 0.9rem; max-height: 240px; overflow-y: auto; margin: 0; }
-.lab-picker legend { font-weight: 700; font-size: 0.9rem; padding: 0 0.4rem; color: var(--c-text); }
-.lab-picker legend span { font-weight: 400; color: var(--c-text-soft); }
-.lab-picker__area { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--c-secondary); font-weight: 700; margin: 0.7rem 0 0.25rem; }
+/* Selezione multipla laboratori — accordion per area */
+.lab-picker { border: none; padding: 0; margin: 0; display: grid; gap: 0.4rem; }
+.lab-picker legend { font-weight: 600; font-size: 0.9rem; padding: 0; margin-bottom: 0.2rem; color: var(--c-text); }
+.lab-acc { border: 1px solid var(--c-border); border-radius: 8px; overflow: hidden; }
+.lab-acc__head {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+  background: var(--c-bg-alt); border: none; cursor: pointer; padding: 0.6rem 0.8rem; font: inherit;
+  font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em;
+  color: var(--c-primary); text-align: left;
+}
+.lab-acc.is-open .lab-acc__head { color: var(--c-secondary); }
+.lab-acc__chev { font-size: 1.3rem; line-height: 1; transition: transform .2s; color: var(--c-text-soft); flex: 0 0 auto; }
+.lab-acc.is-open .lab-acc__chev { transform: rotate(45deg); color: var(--c-secondary); }
+.lab-acc__body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .25s ease; }
+.lab-acc.is-open .lab-acc__body { grid-template-rows: 1fr; }
+.lab-acc__inner { min-height: 0; overflow: hidden; padding: 0 0.8rem; }
+.lab-acc.is-open .lab-acc__inner { padding: 0.4rem 0.8rem 0.6rem; }
 .booking-form .lab-picker__item { display: flex; align-items: flex-start; gap: 0.5rem; font-weight: 400; font-size: 0.9rem; padding: 0.18rem 0; }
 .booking-form .lab-picker__item input { margin-top: 0.2rem; flex: 0 0 auto; width: auto; }
 .form-error { color: #c0392b; font-weight: 600; }

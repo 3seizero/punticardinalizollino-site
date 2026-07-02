@@ -10,6 +10,7 @@ import { project } from '../config/project.js'
 export default function BookingForm({ tipo = 'consulenza', titolo, labGroups, onClose }) {
   const [state, setState] = useState('idle') // idle | sending | ok | error
   const [err, setErr] = useState('')
+  const [openArea, setOpenArea] = useState(null) // accordion aree laboratori
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -71,16 +72,25 @@ export default function BookingForm({ tipo = 'consulenza', titolo, labGroups, on
 
       {labGroups && labGroups.length > 0 && (
         <fieldset className="lab-picker">
-          <legend>Laboratori di interesse <span>(seleziona uno o più)</span></legend>
+          <legend>Laboratori di interesse</legend>
           {labGroups.map((area, i) => (
-            <div className="lab-picker__group" key={i}>
-              <p className="lab-picker__area">{area.titolo}</p>
-              {area.laboratori.map((lab, j) => (
-                <label className="lab-picker__item" key={j}>
-                  <input type="checkbox" name="laboratori[]" value={lab.nome} />
-                  <span>{lab.nome}</span>
-                </label>
-              ))}
+            <div className={'lab-acc' + (openArea === i ? ' is-open' : '')} key={i}>
+              <button type="button" className="lab-acc__head"
+                onClick={() => setOpenArea((cur) => (cur === i ? null : i))}
+                aria-expanded={openArea === i}>
+                <span>{area.titolo}</span>
+                <span className="lab-acc__chev" aria-hidden="true">+</span>
+              </button>
+              <div className="lab-acc__body">
+                <div className="lab-acc__inner">
+                  {area.laboratori.map((lab, j) => (
+                    <label className="lab-picker__item" key={j}>
+                      <input type="checkbox" name="laboratori[]" value={lab.nome} />
+                      <span>{lab.nome}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
             </div>
           ))}
         </fieldset>
