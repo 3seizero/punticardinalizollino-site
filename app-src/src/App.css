@@ -142,8 +142,10 @@
   padding: 1.25rem 1.4rem; box-shadow: var(--shadow);
 }
 .icard.interactive { cursor: pointer; transition: border-color .18s, box-shadow .18s, transform .18s; }
-.icard.interactive:hover, .icard.interactive:focus-visible {
-  border-color: var(--c-secondary); box-shadow: 0 12px 30px rgba(0,0,0,.10); transform: translateY(-2px); outline: none;
+.icard.interactive:focus-visible { border-color: var(--c-secondary); box-shadow: 0 12px 30px rgba(0,0,0,.10); outline: none; }
+.icard.is-open { border-color: var(--c-secondary); }
+@media (hover: hover) {
+  .icard.interactive:hover { border-color: var(--c-secondary); box-shadow: 0 12px 30px rgba(0,0,0,.10); transform: translateY(-2px); }
 }
 .icard__head { display: flex; align-items: center; gap: .7rem; }
 .icard__head h3 { margin: 0; color: var(--c-primary); font-size: 1.06rem; }
@@ -157,16 +159,20 @@
 .icard.interactive .icard__head::after {
   content: '+'; margin-left: auto; color: var(--c-text-soft); font-size: 1.4rem; line-height: 1; transition: transform .2s, color .2s;
 }
-.icard.interactive:hover .icard__head::after, .icard.is-open .icard__head::after { transform: rotate(45deg); color: var(--c-secondary); }
+.icard.is-open .icard__head::after { transform: rotate(45deg); color: var(--c-secondary); }
+@media (hover: hover) {
+  .icard.interactive:hover .icard__head::after { transform: rotate(45deg); color: var(--c-secondary); }
+}
 /* rollover: descrizione a comparsa */
 .icard__reveal {
   display: grid; grid-template-rows: 0fr; overflow: hidden; opacity: 0; margin-top: 0;
   transition: grid-template-rows .26s ease, opacity .26s ease, margin-top .26s ease;
 }
 .icard__reveal > p { min-height: 0; margin: 0; color: var(--c-text-soft); }
-.icard.interactive:hover .icard__reveal,
-.icard.interactive:focus-within .icard__reveal,
 .icard.is-open .icard__reveal { grid-template-rows: 1fr; opacity: 1; margin-top: .6rem; }
+@media (hover: hover) {
+  .icard.interactive:hover .icard__reveal { grid-template-rows: 1fr; opacity: 1; margin-top: .6rem; }
+}
 
 /* ---- Marker elenchi con la shape del progetto ---- */
 .bullets--shape { list-style: none; padding-left: 0; }
