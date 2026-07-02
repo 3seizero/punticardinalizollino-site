@@ -95,9 +95,11 @@ function Footer() {
           <img src={project.assets.logosFooter} alt="Loghi istituzionali e partner di progetto" className="footer-logos" />}
         <div className="footer-inst">
           <p>{f.testo || `Progetto finanziato nell'ambito dell'Avviso Pubblico "PUNTI CARDINALI FOR WORK", PR Puglia FESR-FSE+ 2021-2027 – Azione 5.1 Interventi per l'Occupazione.`}</p>
-          <p><strong>Soggetto Beneficiario:</strong> Comune di {project.comune} &nbsp;·&nbsp;
-             <strong>Coordinamento:</strong> ANTFORM APS – Ente del Terzo Settore &nbsp;·&nbsp;
-             <strong>CUP:</strong> {project.cup}</p>
+          <p className="footer-meta">
+            <span><strong>Soggetto Beneficiario:</strong> Comune di {project.comune}</span>
+            <span><strong>Coordinamento:</strong> ANTFORM APS – Ente del Terzo Settore</span>
+            <span><strong>CUP:</strong> {project.cup}</span>
+          </p>
         </div>
       </div>
     </footer>

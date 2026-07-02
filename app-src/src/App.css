@@ -49,6 +49,7 @@
 .footer-logos { max-width: 1000px; margin: 0 auto 1.4rem; background: #fff; border-radius: 10px; padding: 0.8rem 1rem; }
 .footer-inst p { font-size: 0.82rem; opacity: 0.85; margin-bottom: 0.5rem; }
 .footer-inst strong { color: #fff; }
+.footer-meta span { display: block; margin-bottom: 0.15rem; }
 
 /* Form CTA */
 .booking-form { display: grid; gap: 0.9rem; max-width: 520px; }
