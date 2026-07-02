@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import BookingForm from './BookingForm.jsx'
 import { ui } from '../config/ui.js'
 import { Icon, iconFor } from './icons.jsx'
@@ -136,13 +137,16 @@ export function Modal({ open, onClose, children, title }) {
     }
   }, [open, onClose])
   if (!open) return null
-  return (
+  // Portal su <body>: il modal è sempre sopra header/sezioni (nessun ritaglio o
+  // sovrapposizione da stacking context della pagina)
+  return createPortal(
     <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-label={title}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <button className="modal__close" onClick={onClose} aria-label="Chiudi">×</button>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 
