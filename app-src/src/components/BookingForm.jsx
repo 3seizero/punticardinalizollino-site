@@ -25,8 +25,8 @@ export default function BookingForm({ tipo = 'consulenza', titolo, labGroups, qu
       let res
       if (cfg.provider === 'web3forms') {
         fd.append('access_key', cfg.accessKey)
-        fd.append('subject', `[${project.nomeProgetto}] Richiesta: ${tipo}`)
-        fd.append('from_name', project.nomeProgetto)
+        fd.append('subject', `Nuova richiesta ricevuta da "${titolo || tipo}" - ${project.riferimento || project.nomeProgetto}`)
+        fd.append('from_name', project.nomeCompleto || project.nomeProgetto)
         res = await fetch(cfg.endpoint, { method: 'POST', body: fd })
       } else {
         res = await fetch(cfg.endpoint || '/contact.php', { method: 'POST', body: fd })
@@ -59,7 +59,11 @@ export default function BookingForm({ tipo = 'consulenza', titolo, labGroups, qu
     <form className="booking-form" onSubmit={handleSubmit}>
       {titolo && <h3>{titolo}</h3>}
       <input type="hidden" name="tipo_richiesta" value={tipo} />
-      <input type="hidden" name="progetto" value={project.nomeProgetto} />
+      {/* progetto = nome completo con riferimento webapp; nome_form = "NOMEFORM"
+          negli oggetti email; rif = "Punti Cardinali for Work | <Comune>" */}
+      <input type="hidden" name="progetto" value={project.nomeCompleto || project.nomeProgetto} />
+      <input type="hidden" name="nome_form" value={titolo || tipo} />
+      <input type="hidden" name="rif" value={project.riferimento || ''} />
       {/* honeypot anti-spam */}
       <input type="checkbox" name="botcheck" className="visually-hidden" tabIndex="-1" autoComplete="off" />
 

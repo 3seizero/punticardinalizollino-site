@@ -26,7 +26,9 @@ $email     = $clean($_POST['email'] ?? '');
 $telefono  = $clean($_POST['telefono'] ?? '');
 $messaggio = trim((string)($_POST['messaggio'] ?? ''));
 $tipo      = $clean($_POST['tipo_richiesta'] ?? 'richiesta');
-$progetto  = $clean($_POST['progetto'] ?? 'Punti Cardinali for Work');
+$progetto  = $clean($_POST['progetto'] ?? 'Punti Cardinali for Work'); // nome completo con riferimento webapp
+$nomeForm  = $clean($_POST['nome_form'] ?? '') ?: $tipo;               // "NOMEFORM" (es. Prenota una consulenza)
+$rif       = $clean($_POST['rif'] ?? '') ?: $progetto;                 // "Punti Cardinali for Work | <Comune>"
 $quando    = $clean($_POST['quando'] ?? '');          // data evento (Job Day / Puglia Attrattiva)
 $privacy   = !empty($_POST['privacy'] ?? '');
 $aggiorna  = !empty($_POST['aggiornamenti'] ?? '');   // opt-in info su prossimi appuntamenti
@@ -64,30 +66,34 @@ if ($labs) {
     $labsBlock = "\nLaboratori di interesse:\n - " . implode("\n - ", $labs) . "\n";
 }
 
-// --- Corpo email per ANTFORM ---
-$subjectAntform = "[{$progetto}] Richiesta: {$tipo}";
-$bodyAntform  = "Nuova richiesta dal sito {$SITE} ({$progetto}).\n\n";
-$bodyAntform .= "Tipo richiesta: {$tipo}\n";
+// --- Corpo email per ANTFORM (postmaster) ---
+$subjectAntform = "Nuova richiesta ricevuta da \"{$nomeForm}\" - {$rif}";
+$bodyAntform  = "Questi i dati inviati:\n\n";
+$bodyAntform .= "Form: {$nomeForm}\n";
 if ($quando !== '') $bodyAntform .= "Quando: {$quando}\n";
 $bodyAntform .= "Nome: {$nome}\n";
 $bodyAntform .= "Email: {$email}\n";
-$bodyAntform .= "Telefono: {$telefono}\n";
-$bodyAntform .= "Consenso trattamento dati (privacy): sì\n";
-$bodyAntform .= "Opt-in aggiornamenti su prossimi appuntamenti: " . ($aggiorna ? 'SÌ' : 'no') . "\n";
+$bodyAntform .= "Telefono: " . ($telefono !== '' ? $telefono : '—') . "\n";
 $bodyAntform .= $labsBlock;
-if ($messaggio !== '') $bodyAntform .= "\nMessaggio:\n{$messaggio}\n";
+$bodyAntform .= "Messaggio: " . ($messaggio !== '' ? $messaggio : '—') . "\n";
+$bodyAntform .= "Consenso al trattamento dei dati personali: sì\n";
+$bodyAntform .= "Opt-in informazioni sui prossimi appuntamenti: " . ($aggiorna ? 'SÌ' : 'no') . "\n";
 
 // --- Corpo AUTORESPONDER per il mittente ---
-$subjectUser = "Riepilogo della tua richiesta — {$progetto}";
+$subjectUser = "\"{$nomeForm}\" - {$rif}";
 $bodyUser  = "Gentile {$nome},\n\n";
-$bodyUser .= "grazie per averci contattato tramite {$progetto}. Abbiamo ricevuto la tua richiesta e ti ricontatteremo al più presto dall'Orientation Desk.\n\n";
-$bodyUser .= "Riepilogo:\n";
-$bodyUser .= "- Tipo richiesta: {$tipo}\n";
+$bodyUser .= "grazie per averci contattato. Abbiamo ricevuto la tua richiesta \"{$nomeForm}\" e ti ricontatteremo al più presto dall'Orientation Desk.\n\n";
+$bodyUser .= "Riepilogo dei dati inviati:\n";
+$bodyUser .= "- Richiesta: {$nomeForm}\n";
 if ($quando !== '') $bodyUser .= "- Quando: {$quando}\n";
-if ($telefono !== '') $bodyUser .= "- Telefono: {$telefono}\n";
+$bodyUser .= "- Nome: {$nome}\n";
+$bodyUser .= "- Email: {$email}\n";
+$bodyUser .= "- Telefono: " . ($telefono !== '' ? $telefono : '—') . "\n";
 if ($labs) $bodyUser .= "- Laboratori di interesse:\n   • " . implode("\n   • ", $labs) . "\n";
-if ($messaggio !== '') $bodyUser .= "- Messaggio: {$messaggio}\n";
-if ($aggiorna) $bodyUser .= "\nHai scelto di ricevere informazioni sui prossimi appuntamenti: ti terremo aggiornato/a su tutte le attività del progetto.\n";
+$bodyUser .= "- Messaggio: " . ($messaggio !== '' ? $messaggio : '—') . "\n";
+$bodyUser .= "- Consenso al trattamento dei dati personali: sì\n";
+$bodyUser .= "- Ricevere informazioni sui prossimi appuntamenti: " . ($aggiorna ? 'sì' : 'no') . "\n";
+if ($aggiorna) $bodyUser .= "\nTi terremo aggiornato/a sui prossimi appuntamenti e su tutte le attività del progetto.\n";
 $bodyUser .= "\nQuesta è una email automatica di conferma, non è necessario rispondere.\n\n";
 $bodyUser .= "{$progetto}\nCoordinamento: ANTFORM APS – Ente del Terzo Settore";
 

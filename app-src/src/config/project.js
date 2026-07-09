@@ -6,6 +6,10 @@
 export const project = {
   slug: 'zollino',
   nomeProgetto: 'Tradizioni Digitali',
+  // Nome completo con riferimento alla webapp: usato come <title>, mittente
+  // delle email e negli oggetti (richiesta Carlo: sempre riconoscibile la provenienza)
+  nomeCompleto: 'Tradizioni Digitali - Punti Cardinali for Work | Zollino',
+  riferimento: 'Punti Cardinali for Work | Zollino',
   sottotitolo: 'Innovazione e Sostenibilità per la Promozione del Territorio',
   comune: 'Zollino',
   cup: 'I41D25000090002',
