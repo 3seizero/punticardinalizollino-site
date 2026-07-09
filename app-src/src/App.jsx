@@ -113,6 +113,13 @@ function Footer() {
             <span><strong>Coordinamento:</strong> ANTFORM APS – Ente del Terzo Settore</span>
             <span><strong>CUP:</strong> {project.cup}</span>
           </p>
+          {project.privacy?.policyUrl && (
+            <p className="footer-links">
+              <a href={project.privacy.policyUrl} target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+              <span aria-hidden="true"> · </span>
+              <a href={project.privacy.cookieUrl} target="_blank" rel="noopener noreferrer">Cookie Policy</a>
+            </p>
+          )}
         </div>
       </div>
     </footer>

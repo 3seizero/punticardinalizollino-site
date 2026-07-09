@@ -5,9 +5,11 @@ import { project } from '../config/project.js'
  * Form CTA con invio via email (provider 'php' → /contact.php, o 'web3forms').
  * `tipo` distingue la richiesta. `labGroups` (array di aree {titolo, laboratori:[{nome}]})
  * abilita la selezione multipla dei laboratori (checkbox) — usato dal form "laboratorio".
+ * `quando` (stringa data evento) mostra il campo "Quando" in sola lettura (Job Day /
+ * Puglia Attrattiva) e viene incluso nell'email.
  * Il backend invia la mail ad Antform E un autoresponder di riepilogo al mittente.
  */
-export default function BookingForm({ tipo = 'consulenza', titolo, labGroups, onClose }) {
+export default function BookingForm({ tipo = 'consulenza', titolo, labGroups, quando, onClose }) {
   const [state, setState] = useState('idle') // idle | sending | ok | error
   const [err, setErr] = useState('')
   const [openArea, setOpenArea] = useState(null) // accordion aree laboratori
@@ -60,6 +62,12 @@ export default function BookingForm({ tipo = 'consulenza', titolo, labGroups, on
       {/* honeypot anti-spam */}
       <input type="checkbox" name="botcheck" className="visually-hidden" tabIndex="-1" autoComplete="off" />
 
+      {quando && (
+        <label>Quando
+          <input name="quando" type="text" value={quando} readOnly />
+        </label>
+      )}
+
       <label>Nome e cognome
         <input name="nome" type="text" required autoComplete="name" />
       </label>
@@ -101,7 +109,15 @@ export default function BookingForm({ tipo = 'consulenza', titolo, labGroups, on
       </label>
       <label className="consent">
         <input name="privacy" type="checkbox" required />
-        <span>Acconsento al trattamento dei dati per essere ricontattato/a (GDPR).</span>
+        <span>
+          Ho letto l'<a href={project.privacy?.policyUrl} target="_blank" rel="noopener noreferrer">Informativa Privacy</a> e
+          acconsento al trattamento dei dati personali inviati per dare seguito alla mia richiesta,
+          ai sensi del Regolamento UE 2016/679 (GDPR).
+        </span>
+      </label>
+      <label className="consent">
+        <input name="aggiornamenti" type="checkbox" />
+        <span>Desidero ricevere informazioni sui prossimi appuntamenti e sulle attività del progetto.</span>
       </label>
 
       {state === 'error' && <p className="form-error" role="alert">⚠️ {err}</p>}

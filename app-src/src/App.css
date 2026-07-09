@@ -50,6 +50,8 @@
 .footer-inst p { font-size: 0.82rem; opacity: 0.85; margin-bottom: 0.5rem; }
 .footer-inst strong { color: #fff; }
 .footer-meta span { display: block; margin-bottom: 0.15rem; }
+.footer-links a { color: #fff; text-decoration: underline; }
+.footer-links a:hover { color: var(--c-accent); }
 
 /* Form CTA */
 .booking-form { display: grid; gap: 0.9rem; max-width: 520px; }
@@ -62,6 +64,9 @@
   border-radius: 10px; background: var(--c-bg); color: var(--c-text); width: 100%;
 }
 .booking-form .consent { grid-template-columns: auto 1fr; align-items: start; gap: 0.5rem; font-weight: 400; font-size: 0.82rem; }
+.booking-form .consent a { text-decoration: underline; font-weight: 600; }
+/* Campo "Quando" (data evento) in sola lettura */
+.booking-form input[readonly] { background: var(--c-bg-alt); font-weight: 700; color: var(--c-primary); }
 
 /* Selezione multipla laboratori — accordion per area */
 .lab-picker { border: none; padding: 0; margin: 0; display: grid; gap: 0.4rem; }
@@ -117,6 +122,28 @@
 /* Testo introduttivo (prima sezione dopo l'hero) */
 .intro-lead { padding-block: clamp(2rem, 5vw, 3.2rem); }
 .lead { font-size: clamp(1.05rem, 2.2vw, 1.2rem); color: var(--c-text-soft); max-width: 780px; }
+
+/* ---- Blocco "CALENDARIO" (prossimo appuntamento Job Day / Puglia Attrattiva) ---- */
+.section--cal { padding-block: clamp(1.8rem, 4.5vw, 3rem); }
+.apt-card {
+  display: flex; align-items: flex-start; gap: 1.1rem;
+  background: color-mix(in srgb, var(--c-accent) 10%, var(--c-bg));
+  border: 1px solid color-mix(in srgb, var(--c-accent) 45%, transparent);
+  border-left: 6px solid var(--c-accent);
+  border-radius: var(--radius); padding: 1.3rem 1.5rem;
+}
+.apt-card__icon {
+  display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+  width: 46px; height: 46px; border-radius: 10px;
+  color: var(--c-primary-dark); background: var(--c-accent);
+}
+.apt-card__icon svg { width: 25px; height: 25px; }
+.apt-card__kicker { text-transform: uppercase; letter-spacing: 0.09em; font-size: 0.78rem; font-weight: 800; color: var(--c-secondary); margin: 0 0 0.15rem; }
+.apt-card__data { font-size: clamp(1.25rem, 3vw, 1.6rem); font-weight: 800; color: var(--c-primary); margin: 0 0 0.25rem; line-height: 1.25; }
+.apt-card__info { margin: 0; color: var(--c-text); font-weight: 500; }
+
+/* Invito pre-CTA (resta aggiornato sulle attività) */
+.invito { max-width: 680px; font-weight: 600; color: var(--c-primary); }
 
 /* ---- Page hero (pagine interne) ---- */
 .page-hero { background: var(--c-bg-alt); padding-block: clamp(2.2rem, 6vw, 3.6rem); border-bottom: 1px solid var(--c-border); }

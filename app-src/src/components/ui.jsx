@@ -4,10 +4,17 @@ import BookingForm from './BookingForm.jsx'
 import { ui } from '../config/ui.js'
 import { Icon, iconFor } from './icons.jsx'
 
-/* Sezione con titolo opzionale e sfondo alternabile */
-export function Section({ title, kicker, alt, children, id }) {
+/* Mini-markdown per i testi di config: rende **testo** in grassetto */
+export function emph(text) {
+  if (typeof text !== 'string' || !text.includes('**')) return text
+  return text.split('**').map((part, i) => (i % 2 ? <strong key={i}>{part}</strong> : part))
+}
+
+/* Sezione con titolo opzionale. Gli sfondi si alternano automaticamente
+   (bianco/grigio) via CSS in index.css — nessun prop da gestire. */
+export function Section({ title, kicker, children, id }) {
   return (
-    <section className={'section' + (alt ? ' section--alt' : '')} id={id}>
+    <section className="section" id={id}>
       <div className="container">
         {kicker && <p className="kicker">{kicker}</p>}
         {title && <h2>{title}</h2>}
@@ -23,7 +30,7 @@ export function PageHero({ title, subtitle, children }) {
     <section className="page-hero">
       <div className="container">
         <h1>{title}</h1>
-        {subtitle && <p className="page-hero__sub">{subtitle}</p>}
+        {subtitle && <p className="page-hero__sub">{emph(subtitle)}</p>}
         {children}
       </div>
     </section>
@@ -105,9 +112,9 @@ export function Chips({ items }) {
 }
 
 /* Blocco di testo: titolo + paragrafi[] */
-export function TextBlock({ titolo, paragrafi, alt, kicker }) {
+export function TextBlock({ titolo, paragrafi, kicker }) {
   return (
-    <Section title={titolo} alt={alt} kicker={kicker}>
+    <Section title={titolo} kicker={kicker}>
       {(paragrafi || []).map((p, i) => <p key={i}>{p}</p>)}
     </Section>
   )
@@ -151,8 +158,9 @@ export function Modal({ open, onClose, children, title }) {
 }
 
 /* Pulsante CTA che apre la modale col form di prenotazione.
-   `labGroups` abilita la selezione multipla dei laboratori nel form. */
-export function BookingCTA({ label, tipo = 'consulenza', ghost, titoloForm, labGroups }) {
+   `labGroups` abilita la selezione multipla dei laboratori nel form.
+   `quando` mostra la data dell'evento nel form (campo in sola lettura). */
+export function BookingCTA({ label, tipo = 'consulenza', ghost, titoloForm, labGroups, quando }) {
   const [open, setOpen] = useState(false)
   return (
     <>
@@ -160,7 +168,7 @@ export function BookingCTA({ label, tipo = 'consulenza', ghost, titoloForm, labG
         {label}
       </button>
       <Modal open={open} onClose={() => setOpen(false)} title={label}>
-        <BookingForm tipo={tipo} titolo={titoloForm || label} labGroups={labGroups} onClose={() => setOpen(false)} />
+        <BookingForm tipo={tipo} titolo={titoloForm || label} labGroups={labGroups} quando={quando} onClose={() => setOpen(false)} />
       </Modal>
     </>
   )

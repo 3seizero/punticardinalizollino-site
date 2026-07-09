@@ -27,7 +27,9 @@ $telefono  = $clean($_POST['telefono'] ?? '');
 $messaggio = trim((string)($_POST['messaggio'] ?? ''));
 $tipo      = $clean($_POST['tipo_richiesta'] ?? 'richiesta');
 $progetto  = $clean($_POST['progetto'] ?? 'Punti Cardinali for Work');
+$quando    = $clean($_POST['quando'] ?? '');          // data evento (Job Day / Puglia Attrattiva)
 $privacy   = !empty($_POST['privacy'] ?? '');
+$aggiorna  = !empty($_POST['aggiornamenti'] ?? '');   // opt-in info su prossimi appuntamenti
 
 // Laboratori selezionati (checkbox multipli), name="laboratori[]"
 $labs = $_POST['laboratori'] ?? [];
@@ -66,9 +68,12 @@ if ($labs) {
 $subjectAntform = "[{$progetto}] Richiesta: {$tipo}";
 $bodyAntform  = "Nuova richiesta dal sito {$SITE} ({$progetto}).\n\n";
 $bodyAntform .= "Tipo richiesta: {$tipo}\n";
+if ($quando !== '') $bodyAntform .= "Quando: {$quando}\n";
 $bodyAntform .= "Nome: {$nome}\n";
 $bodyAntform .= "Email: {$email}\n";
 $bodyAntform .= "Telefono: {$telefono}\n";
+$bodyAntform .= "Consenso trattamento dati (privacy): sì\n";
+$bodyAntform .= "Opt-in aggiornamenti su prossimi appuntamenti: " . ($aggiorna ? 'SÌ' : 'no') . "\n";
 $bodyAntform .= $labsBlock;
 if ($messaggio !== '') $bodyAntform .= "\nMessaggio:\n{$messaggio}\n";
 
@@ -78,9 +83,11 @@ $bodyUser  = "Gentile {$nome},\n\n";
 $bodyUser .= "grazie per averci contattato tramite {$progetto}. Abbiamo ricevuto la tua richiesta e ti ricontatteremo al più presto dall'Orientation Desk.\n\n";
 $bodyUser .= "Riepilogo:\n";
 $bodyUser .= "- Tipo richiesta: {$tipo}\n";
+if ($quando !== '') $bodyUser .= "- Quando: {$quando}\n";
 if ($telefono !== '') $bodyUser .= "- Telefono: {$telefono}\n";
 if ($labs) $bodyUser .= "- Laboratori di interesse:\n   • " . implode("\n   • ", $labs) . "\n";
 if ($messaggio !== '') $bodyUser .= "- Messaggio: {$messaggio}\n";
+if ($aggiorna) $bodyUser .= "\nHai scelto di ricevere informazioni sui prossimi appuntamenti: ti terremo aggiornato/a su tutte le attività del progetto.\n";
 $bodyUser .= "\nQuesta è una email automatica di conferma, non è necessario rispondere.\n\n";
 $bodyUser .= "{$progetto}\nCoordinamento: ANTFORM APS – Ente del Terzo Settore";
 

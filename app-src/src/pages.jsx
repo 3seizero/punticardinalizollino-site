@@ -6,6 +6,30 @@ import { Icon, iconFor } from './components/icons.jsx'
 
 const C = content
 
+/* Invito standard pre-CTA (Job Day / Puglia Attrattiva); sovrascrivibile
+   per progetto con la chiave `invito` in content.js. */
+const INVITO_DEFAULT = "Vuoi partecipare o non perdere i prossimi appuntamenti? Invia la tua richiesta: sarai ricontattato/a e, se lo desideri, resterai aggiornato/a su tutte le attività e gli eventi del progetto."
+
+/* Blocco in evidenza "CALENDARIO": prossimo appuntamento (data, orario, luogo).
+   Si attiva con la chiave `appuntamento: {data, orario, luogo, citta}` in content.js. */
+function Calendario({ apt }) {
+  if (!apt) return null
+  return (
+    <section className="section section--cal">
+      <div className="container">
+        <div className="apt-card">
+          <span className="apt-card__icon" aria-hidden="true"><Icon name="calendar" /></span>
+          <div>
+            <p className="apt-card__kicker">Calendario</p>
+            <p className="apt-card__data">{apt.data}</p>
+            <p className="apt-card__info">{apt.orario}<br />{apt.luogo}{apt.citta ? ` · ${apt.citta}` : ''}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 /* ----------------------------- HOME ----------------------------- */
 export function Home() {
   const h = C.home
@@ -33,7 +57,7 @@ export function Home() {
         </div>
       </section>
 
-      <Section title="Cosa puoi fare" alt>
+      <Section title="Cosa puoi fare">
         <CardGrid items={h.cosaPuoiFare} />
       </Section>
 
@@ -65,19 +89,19 @@ export function Progetto() {
   return (
     <>
       <PageHero title={p.visione.titolo} subtitle={C.meta.sottotitolo} />
-      <Section alt>{p.visione.paragrafi.map((t, i) => <p key={i}>{t}</p>)}</Section>
+      <Section>{p.visione.paragrafi.map((t, i) => <p key={i}>{t}</p>)}</Section>
       <TextBlock titolo={p.intro.titolo} paragrafi={p.intro.paragrafi} />
-      <TextBlock titolo={perche.titolo} paragrafi={perche.paragrafi} alt />
+      <TextBlock titolo={perche.titolo} paragrafi={perche.paragrafi} />
       <Section title="A chi si rivolge">
         <p>{p.aChiSiRivolge.intro}</p>
         <Chips items={p.aChiSiRivolge.categorie} />
       </Section>
-      <Section title="Obiettivi" alt><Bullets items={p.obiettivi} /></Section>
+      <Section title="Obiettivi"><Bullets items={p.obiettivi} /></Section>
       <Section title="Gli asset strategici del territorio">
         <CardGrid items={p.assetStrategici} />
       </Section>
       {coord?.descrizione && (
-        <Section title="Coordinamento delle attività progettuali" alt kicker={coord.ente}>
+        <Section title="Coordinamento delle attività progettuali" kicker={coord.ente}>
           <p>{coord.descrizione}</p>
           {coord['attività']?.length > 0 && <Bullets items={coord['attività']} />}
         </Section>
@@ -92,7 +116,7 @@ export function OrientationDesk() {
   return (
     <>
       <PageHero title={d.intro.titolo} />
-      <Section alt>{d.intro.paragrafi.map((t, i) => <p key={i}>{t}</p>)}</Section>
+      <Section>{d.intro.paragrafi.map((t, i) => <p key={i}>{t}</p>)}</Section>
       <Section>
         <div className="info-cols">
           <div className="card">
@@ -107,7 +131,7 @@ export function OrientationDesk() {
           </div>
         </div>
       </Section>
-      <Section title="Servizi disponibili" alt><CardGrid items={d.servizi} /></Section>
+      <Section title="Servizi disponibili"><CardGrid items={d.servizi} /></Section>
       <Section>
         <div className="cta-stack">
           <BookingCTA label="Prenota un colloquio" tipo="colloquio" />
@@ -125,7 +149,7 @@ export function OrientationLab() {
     <>
       <PageHero title={l.titolo} subtitle={l.intro || undefined} />
       {l.aree.map((area, i) => (
-        <Section key={i} title={area.titolo} alt={i % 2 === 1}>
+        <Section key={i} title={area.titolo}>
           <CardGrid items={area.laboratori} context={area.titolo} />
         </Section>
       ))}
@@ -141,16 +165,22 @@ export function JobDay() {
   return (
     <>
       <PageHero title={j.titolo} subtitle={j.intro || undefined} />
+      <Calendario apt={j.appuntamento} />
       {j.percorsi?.length > 0 && (
-        <Section title="I percorsi" alt><CardGrid items={j.percorsi} /></Section>
+        <Section title="I percorsi"><CardGrid items={j.percorsi} /></Section>
       )}
       {attivita?.length > 0 && (
         <Section title="Attività"><Chips items={attivita} /></Section>
       )}
       {j.obiettivi?.length > 0 && (
-        <Section title="Obiettivi" alt><Bullets items={j.obiettivi} /></Section>
+        <Section title="Obiettivi"><Bullets items={j.obiettivi} /></Section>
       )}
-      <Section><div className="cta-stack"><BookingCTA label="Partecipa al prossimo Job Day" tipo="evento" /></div></Section>
+      <Section>
+        <p className="invito">{j.invito || INVITO_DEFAULT}</p>
+        <div className="cta-stack">
+          <BookingCTA label="Partecipa al prossimo Job Day" tipo="evento" quando={j.appuntamento?.data} />
+        </div>
+      </Section>
     </>
   )
 }
@@ -161,7 +191,7 @@ export function DonnaPartecipa() {
   return (
     <>
       <PageHero title={w.titolo} subtitle={w.intro} />
-      <Section title="Tematiche" alt><Chips items={w.tematiche} /></Section>
+      <Section title="Tematiche"><Chips items={w.tematiche} /></Section>
       {w.format && <Section title="Format"><p>{w.format}</p></Section>}
       <Section><div className="cta-stack"><BookingCTA label="Partecipa al percorso" tipo="donna" /></div></Section>
     </>
@@ -174,8 +204,15 @@ export function MareASinistra() {
   return (
     <>
       <PageHero title={m.titolo} subtitle={m.intro} />
-      {m.obiettivi?.length > 0 && <Section title="Obiettivi" alt><Bullets items={m.obiettivi} /></Section>}
+      <Calendario apt={m.appuntamento} />
+      {m.obiettivi?.length > 0 && <Section title="Obiettivi"><Bullets items={m.obiettivi} /></Section>}
       <Section title="Ambiti di promozione"><Chips items={m.ambiti} /></Section>
+      <Section>
+        <p className="invito">{m.invito || INVITO_DEFAULT}</p>
+        <div className="cta-stack">
+          <BookingCTA label="Partecipa a Puglia Attrattiva" tipo="puglia attrattiva" quando={m.appuntamento?.data} />
+        </div>
+      </Section>
     </>
   )
 }
@@ -186,7 +223,7 @@ export function Opportunita() {
   return (
     <>
       <PageHero title={o.titolo} />
-      <Section alt><CardGrid items={o.voci} /></Section>
+      <Section><CardGrid items={o.voci} /></Section>
     </>
   )
 }
@@ -212,7 +249,7 @@ export function Contatti() {
           </div>
         </div>
       </Section>
-      <Section title="Scrivici" alt>
+      <Section title="Scrivici">
         <BookingCTA label="Invia una richiesta" tipo="contatto" />
       </Section>
     </>

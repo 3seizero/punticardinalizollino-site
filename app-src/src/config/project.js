@@ -35,6 +35,13 @@ export const project = {
     icon: '/appicon-192.png',
   },
 
+  // iubenda — informativa privacy & cookie policy (codice 75569688 condiviso PCFW).
+  // Il banner è in index.html; questi URL alimentano footer e checkbox dei form.
+  privacy: {
+    policyUrl: 'https://www.iubenda.com/privacy-policy/75569688',
+    cookieUrl: 'https://www.iubenda.com/privacy-policy/75569688/cookie-policy',
+  },
+
   form: {
     provider: 'php',
     endpoint: '/contact.php',
