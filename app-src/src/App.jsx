@@ -115,9 +115,9 @@ function Footer() {
           </p>
           {project.privacy?.policyUrl && (
             <p className="footer-links">
-              <a href={project.privacy.policyUrl} target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+              <PolicyLink url={project.privacy.policyUrl} title="Privacy Policy">Privacy Policy</PolicyLink>
               <span aria-hidden="true"> · </span>
-              <a href={project.privacy.cookieUrl} target="_blank" rel="noopener noreferrer">Cookie Policy</a>
+              <PolicyLink url={project.privacy.cookieUrl} title="Cookie Policy">Cookie Policy</PolicyLink>
             </p>
           )}
         </div>

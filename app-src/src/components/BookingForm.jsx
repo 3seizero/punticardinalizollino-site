@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { project } from '../config/project.js'
+import { PolicyLink } from './ui.jsx'
 
 /**
  * Form CTA con invio via email (provider 'php' → /contact.php, o 'web3forms').
@@ -110,7 +111,7 @@ export default function BookingForm({ tipo = 'consulenza', titolo, labGroups, qu
       <label className="consent">
         <input name="privacy" type="checkbox" required />
         <span>
-          Ho letto l'<a href={project.privacy?.policyUrl} target="_blank" rel="noopener noreferrer">Informativa Privacy</a> e
+          Ho letto l'<PolicyLink url={project.privacy?.policyUrl} title="Informativa Privacy">Informativa Privacy</PolicyLink> e
           acconsento al trattamento dei dati personali inviati per dare seguito alla mia richiesta,
           ai sensi del Regolamento UE 2016/679 (GDPR).
         </span>

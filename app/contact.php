@@ -95,9 +95,15 @@ $bodyUser .= "{$progetto}\nCoordinamento: ANTFORM APS – Ente del Terzo Settore
 // Invio: PHPMailer (SMTP) se disponibile, altrimenti mail()
 // ============================================================
 $sentAntform = false;
-$autoload = __DIR__ . '/vendor/autoload.php';
+// PHPMailer: cercato in ./vendor/ e UN LIVELLO SOPRA app/ (come pcfw-smtp.php:
+// sopravvive ai deploy, che svuotano app/). NB: mail() locale NON consegna —
+// Postfix del server tratta antform.it come dominio locale (caselle inesistenti).
+$autoload = null;
+foreach ([__DIR__ . '/vendor/autoload.php', __DIR__ . '/../vendor/autoload.php'] as $af) {
+    if (is_file($af)) { $autoload = $af; break; }
+}
 
-if (is_file($autoload) && $SMTP_HOST !== '') {
+if ($autoload && $SMTP_HOST !== '') {
     require $autoload;
     $make = function () use ($SMTP_HOST, $SMTP_PORT, $SMTP_USER, $SMTP_PASS, $progetto) {
         $m = new \PHPMailer\PHPMailer\PHPMailer(true);

@@ -221,6 +221,9 @@
   background: none; border: none; font-size: 2rem; line-height: 1; cursor: pointer; color: var(--c-text-soft);
 }
 .modal__close:hover { color: var(--c-primary); }
+/* Modale larga per le policy iubenda (iframe) */
+.modal--wide { max-width: 900px; }
+.policy-frame { width: 100%; height: min(72vh, 800px); border: 0; border-radius: 8px; background: #fff; margin-top: 1rem; }
 
 /* ---- Avviso installazione PWA (Aggiungi a Home) ---- */
 .install-prompt {

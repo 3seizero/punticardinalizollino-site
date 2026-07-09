@@ -120,27 +120,49 @@ export function TextBlock({ titolo, paragrafi, kicker }) {
   )
 }
 
+/* Blocco scroll "body fixed" con CONTATORE: regge le modali annidate
+   (es. Informativa Privacy aperta da dentro il form). Solo la prima
+   attivazione blocca, solo l'ultima chiusura sblocca e ripristina lo scroll. */
+let bodyLocks = 0
+let bodyLockScrollY = 0
+function lockBody() {
+  if (++bodyLocks > 1) return
+  bodyLockScrollY = window.scrollY
+  const b = document.body
+  b.style.position = 'fixed'
+  b.style.top = `-${bodyLockScrollY}px`
+  b.style.insetInline = '0'
+  b.style.width = '100%'
+}
+function unlockBody() {
+  if (--bodyLocks > 0) return
+  const b = document.body
+  b.style.position = ''
+  b.style.top = ''
+  b.style.insetInline = ''
+  b.style.width = ''
+  window.scrollTo(0, bodyLockScrollY)
+}
+
+/* Stack delle modali aperte: ESC chiude solo quella in cima (con modali
+   annidate non deve chiudere anche il form sottostante già compilato). */
+const modalStack = []
+
 /* Modale accessibile */
-export function Modal({ open, onClose, children, title }) {
+export function Modal({ open, onClose, children, title, wide }) {
   useEffect(() => {
     if (!open) return
-    const onKey = (e) => e.key === 'Escape' && onClose()
+    const token = {}
+    modalStack.push(token)
+    const onKey = (e) => {
+      if (e.key === 'Escape' && modalStack[modalStack.length - 1] === token) onClose()
+    }
     document.addEventListener('keydown', onKey)
-    // Blocco scroll robusto: "body fixed" (impedisce ogni movimento dello sfondo,
-    // funziona anche con overflow-x:clip su html per l'header sticky)
-    const scrollY = window.scrollY
-    const b = document.body
-    b.style.position = 'fixed'
-    b.style.top = `-${scrollY}px`
-    b.style.insetInline = '0'
-    b.style.width = '100%'
+    lockBody()
     return () => {
+      modalStack.splice(modalStack.indexOf(token), 1)
       document.removeEventListener('keydown', onKey)
-      b.style.position = ''
-      b.style.top = ''
-      b.style.insetInline = ''
-      b.style.width = ''
-      window.scrollTo(0, scrollY)
+      unlockBody()
     }
   }, [open, onClose])
   if (!open) return null
@@ -148,12 +170,32 @@ export function Modal({ open, onClose, children, title }) {
   // sovrapposizione da stacking context della pagina)
   return createPortal(
     <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-label={title}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+      <div className={'modal' + (wide ? ' modal--wide' : '')} onClick={(e) => e.stopPropagation()}>
         <button className="modal__close" onClick={onClose} aria-label="Chiudi">×</button>
         {children}
       </div>
     </div>,
     document.body,
+  )
+}
+
+/* Link a Informativa Privacy / Cookie Policy iubenda: apre la policy in una
+   MODALE (iframe con variante ?ifr=true, come il widget iubenda), non in una
+   nuova pagina. L'href resta per apertura in nuova scheda (cmd/ctrl+click). */
+export function PolicyLink({ url, title, children }) {
+  const [open, setOpen] = useState(false)
+  if (!url) return children || null
+  const src = url + (url.includes('?') ? '&' : '?') + 'ifr=true'
+  return (
+    <>
+      <a href={url} onClick={(e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey) return
+        e.preventDefault(); setOpen(true)
+      }}>{children}</a>
+      <Modal open={open} onClose={() => setOpen(false)} title={title || 'Informativa'} wide>
+        <iframe className="policy-frame" src={src} title={title || 'Informativa'} />
+      </Modal>
+    </>
   )
 }
 
