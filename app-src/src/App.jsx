@@ -4,6 +4,7 @@ import { project } from './config/project.js'
 import { content } from './config/content.js'
 import { Home, Progetto, OrientationDesk, OrientationLab, JobDay, DonnaPartecipa, MareASinistra, Opportunita, Contatti } from './pages.jsx'
 import InstallPrompt from './components/InstallPrompt.jsx'
+import { PolicyLink } from './components/Modal.jsx'
 import './App.css'
 
 /* Applica la palette del progetto come variabili CSS su :root */

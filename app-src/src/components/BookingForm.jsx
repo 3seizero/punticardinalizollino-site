@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { project } from '../config/project.js'
-import { PolicyLink } from './ui.jsx'
+import { PolicyLink } from './Modal.jsx'
 
 /**
  * Form CTA con invio via email (provider 'php' → /contact.php, o 'web3forms').
