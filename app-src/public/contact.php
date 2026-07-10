@@ -58,6 +58,9 @@ $SMTP_PORT = (int)($cfg('SMTP_PORT') ?: 465);
 $SMTP_USER = (string)$cfg('SMTP_USER');
 $SMTP_PASS = (string)$cfg('SMTP_PASS');
 $MAIL_TO   = (string)($cfg('MAIL_TO') ?: $SMTP_USER);
+// Mittente visibile (From): può differire dall'account di autenticazione
+// (es. From info@antform.it con auth postmaster@ — OVH lo accetta, stesso dominio)
+$MAIL_FROM = (string)($cfg('MAIL_FROM') ?: $SMTP_USER);
 $SITE      = $_SERVER['HTTP_HOST'] ?? 'webapp';
 
 // Blocco laboratori (testo)
@@ -111,14 +114,14 @@ foreach ([__DIR__ . '/vendor/autoload.php', __DIR__ . '/../vendor/autoload.php']
 
 if ($autoload && $SMTP_HOST !== '') {
     require $autoload;
-    $make = function () use ($SMTP_HOST, $SMTP_PORT, $SMTP_USER, $SMTP_PASS, $progetto) {
+    $make = function () use ($SMTP_HOST, $SMTP_PORT, $SMTP_USER, $SMTP_PASS, $MAIL_FROM, $progetto) {
         $m = new \PHPMailer\PHPMailer\PHPMailer(true);
         $m->isSMTP();
         $m->Host = $SMTP_HOST; $m->SMTPAuth = true;
         $m->Username = $SMTP_USER; $m->Password = $SMTP_PASS;
         $m->SMTPSecure = $SMTP_PORT === 465 ? 'ssl' : 'tls';
         $m->Port = $SMTP_PORT; $m->CharSet = 'UTF-8';
-        $m->setFrom($SMTP_USER, $progetto);
+        $m->setFrom($MAIL_FROM, $progetto);
         return $m;
     };
     // 1) ad Antform
@@ -134,7 +137,7 @@ if ($autoload && $SMTP_HOST !== '') {
     } catch (\Throwable $e) { /* ignora: l'importante è la mail ad Antform */ }
 } else {
     // Fallback mail() nativo
-    $from = $SMTP_USER ?: ('no-reply@' . $SITE);
+    $from = $MAIL_FROM ?: ('no-reply@' . $SITE);
     $h1 = ['From: ' . $progetto . ' <' . $from . '>', 'Reply-To: ' . $email, 'Content-Type: text/plain; charset=UTF-8', 'MIME-Version: 1.0'];
     $sentAntform = mail($MAIL_TO, $subjectAntform, $bodyAntform, implode("\r\n", $h1));
     $h2 = ['From: ' . $progetto . ' <' . $from . '>', 'Reply-To: ' . $MAIL_TO, 'Content-Type: text/plain; charset=UTF-8', 'MIME-Version: 1.0'];
