@@ -20,7 +20,10 @@
     <script type="text/javascript">
       var _iub = _iub || [];
       _iub.csConfiguration = {
+        "siteId": 1212147,
         "cookiePolicyId": 75569688,
+        "storage": { "useSiteId": true },
+        "googleConsentMode": true,
         "lang": "it",
         "perPurposeConsent": true,
         "banner": {
@@ -33,7 +36,26 @@
         }
       };
     </script>
+    <script type="text/javascript" src="https://cs.iubenda.com/autoblocking/1212147.js"></script>
     <script type="text/javascript" src="https://cdn.iubenda.com/cs/iubenda_cs.js" charset="UTF-8" async></script>
+    <!-- Google Analytics 4 — stream www.antform.it (G-P1E153XLMW).
+         Consent Mode v2: default NEGATO; il banner iubenda (googleConsentMode +
+         autoblocking) sblocca la misurazione solo dopo il consenso. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        analytics_storage: 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied'
+      });
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-P1E153XLMW"></script>
+    <script>
+      gtag('js', new Date());
+      gtag('config', 'G-P1E153XLMW');
+    </script>
   </head>
   <body>
     <div id="root"></div>
