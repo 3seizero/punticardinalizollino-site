@@ -10,6 +10,7 @@
  * PHPMailer: se presente in ./vendor/ usa SMTP autenticato; altrimenti fallback a mail().
  */
 declare(strict_types=1);
+@ini_set('display_errors', '0'); // mai warning/notice dentro l'output JSON
 header('Content-Type: application/json; charset=utf-8');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
@@ -19,24 +20,30 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 if (!empty($_POST['botcheck'] ?? '')) { echo json_encode(['success' => true]); exit; } // honeypot
 
-$clean = fn($s) => str_replace(["\r", "\n"], ' ', trim((string)$s));
+$clean = fn($s, $max) => mb_substr(str_replace(["\r", "\n"], ' ', trim((string)$s)), 0, $max);
 
-$nome      = $clean($_POST['nome'] ?? '');
-$email     = $clean($_POST['email'] ?? '');
-$telefono  = $clean($_POST['telefono'] ?? '');
-$messaggio = trim((string)($_POST['messaggio'] ?? ''));
-$tipo      = $clean($_POST['tipo_richiesta'] ?? 'richiesta');
-$progetto  = $clean($_POST['progetto'] ?? 'Punti Cardinali for Work'); // nome completo con riferimento webapp
-$nomeForm  = $clean($_POST['nome_form'] ?? '') ?: $tipo;               // "NOMEFORM" (es. Prenota una consulenza)
-$rif       = $clean($_POST['rif'] ?? '') ?: $progetto;                 // "Punti Cardinali for Work | <Comune>"
-$quando    = $clean($_POST['quando'] ?? '');          // data evento (Job Day / Puglia Attrattiva)
+$nome      = $clean($_POST['nome'] ?? '', 120);
+$email     = $clean($_POST['email'] ?? '', 254);
+$telefono  = $clean($_POST['telefono'] ?? '', 40);
+$messaggio = mb_substr(trim((string)($_POST['messaggio'] ?? '')), 0, 5000);
+$tipo      = $clean($_POST['tipo_richiesta'] ?? 'richiesta', 120);
+$progetto  = $clean($_POST['progetto'] ?? 'Punti Cardinali for Work', 160); // nome completo con riferimento webapp
+$nomeForm  = $clean($_POST['nome_form'] ?? '', 120) ?: $tipo;               // "NOMEFORM" (es. Prenota una consulenza)
+$rif       = $clean($_POST['rif'] ?? '', 160) ?: $progetto;                 // "Punti Cardinali for Work | <Comune>"
+$quando    = $clean($_POST['quando'] ?? '', 160);     // data evento (Job Day / Puglia Attrattiva)
 $privacy   = !empty($_POST['privacy'] ?? '');
 $aggiorna  = !empty($_POST['aggiornamenti'] ?? '');   // opt-in info su prossimi appuntamenti
 
 // Laboratori selezionati (checkbox multipli), name="laboratori[]"
 $labs = $_POST['laboratori'] ?? [];
 if (!is_array($labs)) $labs = [$labs];
-$labs = array_values(array_filter(array_map($clean, $labs)));
+$labs = array_slice(array_values(array_filter(array_map(fn($s) => $clean($s, 160), $labs))), 0, 30);
+
+// I campi che finiscono negli OGGETTI delle email arrivano dal client: nei
+// Subject via SMTP autenticato non devono veicolare URL/spam verso terzi.
+$subjSafe = fn($s) => mb_substr(trim(preg_replace('~https?://\S+|www\.\S+~iu', '', $s)), 0, 90);
+$nomeFormS = $subjSafe($nomeForm) ?: 'richiesta';
+$rifS      = $subjSafe($rif) ?: 'Punti Cardinali for Work';
 
 $errors = [];
 if ($nome === '') $errors[] = 'nome mancante';
@@ -45,6 +52,27 @@ if (!$privacy) $errors[] = 'consenso privacy mancante';
 if ($errors) {
     http_response_code(422);
     echo json_encode(['success' => false, 'message' => implode(', ', $errors)]); exit;
+}
+
+// --- Rate limiting per IP ---
+// L'autoresponder invia una email all'indirizzo indicato dall'utente: senza un
+// tetto agli invii l'endpoint è usabile come relay di spam verso terzi (con
+// rischio blacklist del dominio). Finestra scorrevole su file in tmp.
+$RL_MAX    = 5;    // invii consentiti per IP...
+$RL_WINDOW = 900;  // ...ogni 15 minuti
+$ip = (string)($_SERVER['REMOTE_ADDR'] ?? '');
+if ($ip !== '') {
+    $rlFile = sys_get_temp_dir() . '/pcfw-rl-' . hash('sha256', $ip);
+    $now  = time();
+    $hits = is_file($rlFile) ? json_decode((string)@file_get_contents($rlFile), true) : [];
+    if (!is_array($hits)) $hits = [];
+    $hits = array_values(array_filter($hits, fn($t) => is_int($t) && $now - $t < $RL_WINDOW));
+    if (count($hits) >= $RL_MAX) {
+        http_response_code(429);
+        echo json_encode(['success' => false, 'message' => 'Hai già inviato diverse richieste: attendi qualche minuto e riprova.']); exit;
+    }
+    $hits[] = $now;
+    @file_put_contents($rlFile, json_encode($hits), LOCK_EX);
 }
 
 // --- Config SMTP ---
@@ -70,7 +98,7 @@ if ($labs) {
 }
 
 // --- Corpo email per ANTFORM (postmaster) ---
-$subjectAntform = "Nuova richiesta ricevuta da \"{$nomeForm}\" - {$rif}";
+$subjectAntform = "Nuova richiesta ricevuta da \"{$nomeFormS}\" - {$rifS}";
 $bodyAntform  = "Questi i dati inviati:\n\n";
 $bodyAntform .= "Form: {$nomeForm}\n";
 if ($quando !== '') $bodyAntform .= "Quando: {$quando}\n";
@@ -83,7 +111,7 @@ $bodyAntform .= "Consenso al trattamento dei dati personali: sì\n";
 $bodyAntform .= "Opt-in informazioni sui prossimi appuntamenti: " . ($aggiorna ? 'SÌ' : 'no') . "\n";
 
 // --- Corpo AUTORESPONDER per il mittente ---
-$subjectUser = "\"{$nomeForm}\" - {$rif}";
+$subjectUser = "\"{$nomeFormS}\" - {$rifS}";
 $bodyUser  = "Gentile {$nome},\n\n";
 $bodyUser .= "grazie per averci contattato. Abbiamo ricevuto la tua richiesta \"{$nomeForm}\" e ti ricontatteremo al più presto dall'Orientation Desk.\n\n";
 $bodyUser .= "Riepilogo dei dati inviati:\n";
