@@ -254,7 +254,7 @@
   overflow: auto; overscroll-behavior: contain;
 }
 .mobile-only__box { max-width: 480px; text-align: center; }
-.mobile-only__logo { max-width: 240px; width: 70%; height: auto; margin-bottom: 1.6rem; }
+.mobile-only__logo { max-width: 240px; width: 70%; height: auto; margin: 0 auto 1.6rem; }
 .mobile-only__icon { width: 56px; height: 56px; display: block; margin: 0 auto 1.1rem; color: var(--c-accent); }
 .mobile-only__title { display: block; font-size: 1.35rem; line-height: 1.25; margin-bottom: 0.6rem; }
 .mobile-only p { margin: 0; line-height: 1.55; opacity: 0.92; }
