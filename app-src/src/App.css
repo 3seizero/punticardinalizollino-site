@@ -245,3 +245,16 @@
   .install-prompt { flex-wrap: wrap; padding-right: 1.6rem; }
   .install-prompt__cta { width: 100%; }
 }
+
+/* ---- Avviso bloccante "solo smartphone in verticale" (sopra a tutto, modali comprese) ---- */
+.mobile-only {
+  position: fixed; inset: 0; z-index: 2000;
+  display: grid; place-items: center; padding: 2rem 1.25rem;
+  background: var(--c-primary); color: var(--c-on-primary);
+  overflow: auto; overscroll-behavior: contain;
+}
+.mobile-only__box { max-width: 480px; text-align: center; }
+.mobile-only__logo { max-width: 240px; width: 70%; height: auto; margin-bottom: 1.6rem; }
+.mobile-only__icon { width: 56px; height: 56px; display: block; margin: 0 auto 1.1rem; color: var(--c-accent); }
+.mobile-only__title { display: block; font-size: 1.35rem; line-height: 1.25; margin-bottom: 0.6rem; }
+.mobile-only p { margin: 0; line-height: 1.55; opacity: 0.92; }

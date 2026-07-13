@@ -3,10 +3,12 @@
    - icons:       icona tematica monocolore accanto al titolo dei punti elenco
    - hoverReveal: descrizione nascosta, rivelata al passaggio del mouse / tap
    - shapeBullets: marker degli elenchi puntati con la shape del progetto
+   - mobileOnly:  avviso bloccante se non si è su smartphone in verticale
 */
 export const ui = {
   icons: true,
   hoverReveal: true,
   shapeBullets: true,
+  mobileOnly: true,
 }
 export default ui
