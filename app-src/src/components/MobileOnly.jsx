@@ -53,7 +53,7 @@ export default function MobileOnly() {
         {avviso === 'ruota' ? (
           <>
             <strong className="mobile-only__title">Ruota il dispositivo</strong>
-            <p>Questa webapp è pensata per essere usata <b>dallo smartphone, in verticale</b>. Riporta il telefono in posizione verticale per continuare.</p>
+            <p>Questa webapp è pensata per lo <b>smartphone in verticale</b>. Ruota il telefono per continuare.</p>
           </>
         ) : (
           <>
