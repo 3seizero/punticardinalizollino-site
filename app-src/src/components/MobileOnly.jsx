@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { project } from '../config/project.js'
 import { ui } from '../config/ui.js'
 
@@ -8,40 +8,82 @@ import { ui } from '../config/ui.js'
  * Reversibile: ui.mobileOnly = false lo disattiva ovunque.
  *
  * Due messaggi:
- * - 'ruota'   → dispositivo touch non in verticale (telefono/tablet ruotato)
- * - 'desktop' → schermo largo senza touch (computer)
+ * - 'ruota'   → telefono touch ruotato in orizzontale
+ * - 'desktop' → schermo largo senza touch (computer) o tablet troppo grande
  */
 const MAX_WIDTH = 900 // px: oltre questa larghezza non è uno smartphone in verticale
 
+/* Sui dispositivi touch l'orientamento va letto dallo SCHERMO FISICO
+   (screen.orientation): la tastiera su Android riduce la viewport e farebbe
+   risultare "landscape" un telefono tenuto in verticale, con l'overlay che
+   scatta mentre si compila il form. Fallback: media query sulla viewport. */
+function verticaleFisico() {
+  const t = window.screen?.orientation?.type
+  if (t) return t.startsWith('portrait')
+  return window.matchMedia
+    ? window.matchMedia('(orientation: portrait)').matches
+    : window.innerHeight >= window.innerWidth
+}
+
 function stato() {
-  const mm = window.matchMedia
-  const verticale = mm ? mm('(orientation: portrait)').matches : window.innerHeight >= window.innerWidth
-  const stretto = window.innerWidth <= MAX_WIDTH
-  if (verticale && stretto) return null
-  const touch = mm ? mm('(pointer: coarse)').matches : false
-  return touch ? 'ruota' : 'desktop'
+  const touch = window.matchMedia ? window.matchMedia('(pointer: coarse)').matches : false
+  if (touch) {
+    // Lato corto dello schermo fisico: se supera la soglia (tablet grande),
+    // ruotare non basterebbe mai → istruzioni da 'desktop', non "ruota".
+    const latoCorto = Math.min(
+      window.screen?.width || window.innerWidth,
+      window.screen?.height || window.innerHeight,
+    )
+    if (latoCorto > MAX_WIDTH) return 'desktop'
+    return verticaleFisico() ? null : 'ruota'
+  }
+  const verticale = window.matchMedia
+    ? window.matchMedia('(orientation: portrait)').matches
+    : window.innerHeight >= window.innerWidth
+  return verticale && window.innerWidth <= MAX_WIDTH ? null : 'desktop'
 }
 
 export default function MobileOnly() {
-  const [avviso, setAvviso] = useState(null)
+  // Stato iniziale calcolato subito (non in effect): evita il flash del contenuto.
+  const [avviso, setAvviso] = useState(() => (ui.mobileOnly === false ? null : stato()))
+  const boxRef = useRef(null)
 
   useEffect(() => {
     if (ui.mobileOnly === false) return
     const aggiorna = () => setAvviso(stato())
-    aggiorna()
-    window.addEventListener('resize', aggiorna)
+    const suResize = () => {
+      // Resize con un campo a fuoco = quasi sempre tastiera che si apre/chiude,
+      // non una rotazione: non rivalutare (le rotazioni vere arrivano dagli
+      // eventi orientationchange / screen.orientation change qui sotto).
+      const el = document.activeElement
+      if (el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return
+      aggiorna()
+    }
+    window.addEventListener('resize', suResize)
     window.addEventListener('orientationchange', aggiorna)
+    window.screen?.orientation?.addEventListener?.('change', aggiorna)
     return () => {
-      window.removeEventListener('resize', aggiorna)
+      window.removeEventListener('resize', suResize)
       window.removeEventListener('orientationchange', aggiorna)
+      window.screen?.orientation?.removeEventListener?.('change', aggiorna)
     }
   }, [])
+
+  // Ad avviso attivo: scroll della pagina sottostante bloccato e focus
+  // dentro l'overlay (Tab non deve raggiungere i controlli coperti).
+  useEffect(() => {
+    if (!avviso) return
+    const prima = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    boxRef.current?.focus()
+    return () => { document.body.style.overflow = prima }
+  }, [avviso])
 
   if (!avviso) return null
 
   return (
     <div className="mobile-only" role="dialog" aria-modal="true" aria-label="Avviso: usa lo smartphone in verticale">
-      <div className="mobile-only__box">
+      <div className="mobile-only__box" ref={boxRef} tabIndex={-1}>
         {project.assets?.logoHeader && (
           <img className="mobile-only__logo" src={project.assets.logoHeader} alt={project.nomeProgetto} />
         )}

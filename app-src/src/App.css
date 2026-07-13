@@ -249,11 +249,13 @@
 /* ---- Avviso bloccante "solo smartphone in verticale" (sopra a tutto, modali comprese) ---- */
 .mobile-only {
   position: fixed; inset: 0; z-index: 2000;
-  display: grid; place-items: center; padding: 2rem 1.25rem;
+  display: grid; padding: 2rem 1.25rem;
   background: var(--c-primary); color: var(--c-on-primary);
   overflow: auto; overscroll-behavior: contain;
 }
-.mobile-only__box { max-width: 520px; text-align: center; }
+/* margin:auto (non place-items:center): se il box supera l'altezza del viewport
+   (telefono in landscape) resta raggiungibile con lo scroll dall'inizio. */
+.mobile-only__box { max-width: 520px; margin: auto; text-align: center; outline: none; }
 .mobile-only__logo { max-width: 170px; width: 55%; height: auto; margin: 0 auto 1.3rem; }
 .mobile-only__icon { width: 56px; height: 56px; display: block; margin: 0 auto 1.1rem; color: var(--c-accent); }
 .mobile-only__title { display: block; font-size: 1.35rem; line-height: 1.25; margin-bottom: 0.6rem; }
