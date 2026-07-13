@@ -31,7 +31,7 @@ export const project = {
   },
 
   assets: {
-    logosHeader: '', // striscia istituzionale mancante (da produrre)
+    logosHeader: '/brand/logos-header.png', // striscia loghi istituzionali (in cima)
     logoHeader: '/brand/logo.png',
     hero: '', // hero su rosso pieno (foto hero dedicata: da produrre)
     logosFooter: '', // striscia loghi footer mancante (da produrre)
