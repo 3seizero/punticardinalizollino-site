@@ -225,6 +225,12 @@ export const content = {
   mareASinistra: {
     titolo: "Zollino si racconta oltre i propri confini",
     intro: "Puglia Attrattiva #mareAsinistra è la linea di intervento dedicata alla promozione delle eccellenze culturali, linguistiche, agricole e turistiche di Zollino.",
+    // Blocco download guida (pulsanti ITA/ENG); destinazione del QR code
+    guida: {
+      titolo: "Scarica la Guida breve a un borgo della Grecìa Salentina",
+      ita: "/guide/guida-breve-zollino-ITA.pdf",
+      eng: "/guide/guida-breve-zollino-ENG.pdf",
+    },
     // Prossimo appuntamento: alimenta il blocco "CALENDARIO" e il campo "Quando" del form
     appuntamento: {
       data: "12 e 13 giugno 2026",

@@ -139,10 +139,17 @@ function NotFound() {
   )
 }
 
-/* Riporta lo scroll in alto al cambio pagina */
+/* Riporta lo scroll in alto al cambio pagina; con un #ancora (es. QR code)
+   va al blocco, e ripete a pagina caricata perché immagini e font spostano il layout. */
 function ScrollTop() {
-  const { pathname } = useLocation()
-  useEffect(() => { window.scrollTo(0, 0) }, [pathname])
+  const { pathname, hash } = useLocation()
+  useEffect(() => {
+    if (!hash) { window.scrollTo(0, 0); return }
+    const go = () => document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'instant' })
+    go()
+    window.addEventListener('load', go)
+    return () => window.removeEventListener('load', go)
+  }, [pathname, hash])
   return null
 }
 

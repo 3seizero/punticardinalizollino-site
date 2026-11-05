@@ -213,6 +213,15 @@ export function MareASinistra() {
           <BookingCTA label="Partecipa a Puglia Attrattiva" tipo="puglia attrattiva" quando={m.appuntamento?.data} />
         </div>
       </Section>
+      {/* Blocco download guida: destinazione del QR code (/mareasinistra/#guida) */}
+      {m.guida && (
+        <Section id="guida" title={m.guida.titolo}>
+          <div className="guida-btns">
+            <a className="btn btn--primary" href={m.guida.ita} target="_blank" rel="noopener" hrefLang="it" aria-label="ITA: apri la guida in italiano (PDF)">ITA</a>
+            <a className="btn btn--primary" href={m.guida.eng} target="_blank" rel="noopener" hrefLang="en" aria-label="ENG: open the guide in English (PDF)">ENG</a>
+          </div>
+        </Section>
+      )}
     </>
   )
 }
